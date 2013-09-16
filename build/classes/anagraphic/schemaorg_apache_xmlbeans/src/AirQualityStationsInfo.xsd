@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://airquality.csi.it/aqa/1.0.0"
+	elementFormDefault="qualified" version="1.0.0"
+	xmlns:aqa="http://airquality.csi.it/aqa/1.0.0">
+
+	<xs:complexType name="networkType">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string" />
+			<xs:element name="type" type="xs:integer" />
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="parameterType">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string" />
+			<xs:element name="type" type="xs:string" />
+			<xs:element name="measureUnit" type="xs:string" />
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="stationType">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string" />
+			<xs:element name="address" type="xs:string" />
+			<xs:element name="latitude" type="xs:decimal" nillable="true" />
+			<xs:element name="longitude" type="xs:decimal" nillable="true" />
+			<xs:element name="altitude" type="xs:decimal" nillable="true" />
+			<xs:element name="mobile" type="xs:boolean" />
+			<xs:element name="type" type="xs:integer" nillable="true" />
+			<xs:element name="startDate" type="xs:date" />
+			<xs:element name="endDate" type="xs:date" minOccurs="0" />
+			<xs:element name="networkId" type="xs:string" />
+			<xs:element name="zoneType" type="xs:string" nillable="true" />
+			<xs:element name="zoneInfo" type="xs:integer" nillable="true" />
+			<xs:element name="nationalRelevance" type="xs:boolean" />
+			<xs:element name="nationalName" type="xs:string" nillable="true" />
+			<xs:element name="UEZone" type="xs:string" nillable="true" />
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="sensorType">
+		<xs:sequence>
+			<xs:element name="startDate" type="xs:date" />
+			<xs:element name="endDate" type="xs:date" minOccurs="0" />
+			<xs:element name="acquisitionPeriod" type="xs:integer" />
+			<xs:element name="nationalId" type="xs:integer" nillable="true" />
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:element name="networkList">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="network" type="aqa:networkType"
+					minOccurs="0" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="parameterList">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="parameter" type="aqa:parameterType"
+					minOccurs="0" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="stationList">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="station" type="aqa:stationType"
+					minOccurs="0" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="sensorList">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="sensor" type="aqa:sensorType"
+					minOccurs="0" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="version">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="major" type="xs:unsignedInt" />
+				<xs:element name="minor" type="xs:unsignedInt" />
+				<xs:element name="bugfix" type="xs:unsignedInt" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>

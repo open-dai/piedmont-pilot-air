@@ -1,0 +1,8 @@
+<Context debug="0" reloadable="false" crossContext="false">
+	<Parameter name="cfgFile" value="opendai/config.txt"
+		override="false" />
+	<Parameter name="pollutantFile" value="opendai/pollutant.csv"
+		override="false" />
+	<ResourceLink name="jdbc/srqa" global="jdbc/srqa"
+		type="javax.sql.DataSource" />
+</Context>

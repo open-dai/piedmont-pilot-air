@@ -1,0 +1,90 @@
+<!-- Title:  Build and release procedures for Opendai project -->
+<!-- Author: pierfrancesco.vallosio@consulenti.csi.it -->
+<!-- Date:   02-July-2013 -->
+<!-- $Id: build.xml,v 1.2 2013/07/26 13:26:06 pfvallosio Exp $ -->
+
+<project name="opendai" default="all" basedir=".">
+
+	<description>
+    	Build and release procedures for Opendai project
+	</description>
+
+	<!-- Installation specific properties -->
+	<property name="xmlbeansHome" location="/usr/local/java/xmlbeans-2.6.0" />
+	<property name="proxyhost" value="proxy.csi.it" />
+	<property name="proxyport" value="3128" />
+	<property name="proxy" value="${proxyhost}:${proxyport}" />
+
+	<!-- Global properties -->
+	<property name="aqd-jar" location="../aqd/dist/bin/aqd-0.3.7c.jar" />
+	<property name="xmlbeans-jar" location="/usr/local/java/xmlbeans-2.6.0/lib/xbean.jar" />
+	<property name="src" location="./src" />
+	<property name="lib" location="./lib" />
+	<property name="cfg" location="./cfg" />
+	<property name="build" location="./build" />
+	<property name="dist" location="./dist" />
+
+	<target name="all" depends="dist-opendai-export" description="Build all the project">
+	</target>
+
+	<target name="init">
+		<!-- Timestamp generation -->
+		<tstamp />
+	</target>
+
+	<target name="clean" description="Delete generated files and folders">
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+	</target>
+
+	<target name="generate-anagraphic-java" depends="init" description="Genarate java code from Anagraphic xsd">
+		<mkdir dir="${build}/java" />
+		<mkdir dir="${build}/classes" />
+		<java classname="org.apache.xmlbeans.impl.tool.SchemaCompiler" fork="true" failonerror="true" maxmemory="256m">
+			<arg line="-dl -src ${build}/java -d ${build}/classes/anagraphic -srconly ${src}/xml/AirQualityStationsInfo.xsd" />
+			<sysproperty key="http.proxyHost" value="${proxyhost}" />
+			<sysproperty key="http.proxyPort" value="${proxyport}" />
+			<classpath>
+				<pathelement location="${xmlbeansHome}/lib/xbean.jar" />
+				<pathelement location="${xmlbeansHome}/lib/xmlbeans-qname.jar" />
+				<pathelement location="${xmlbeansHome}/lib/jsr173_1.0_api.jar" />
+				<pathelement location="${xmlbeansHome}/lib/resolver.jar" />
+			</classpath>
+		</java>
+	</target>
+
+	<target name="compile-anagraphic" depends="generate-anagraphic-java" description="Compile java source for Anagraphic">
+		<mkdir dir="${build}/classes/anagraphic" />
+		<javac destdir="${build}/classes/anagraphic" classpath="${xmlbeansHome}/lib/xbean.jar" debug="on" includeantruntime="false">
+			<src path="${build}/java" />
+		</javac>
+	</target>
+
+	<target name="compile-opendai-export" depends="init" description="Compile Opendai Export servlet">
+		<mkdir dir="${build}/classes/opendaiexport" />
+		<javac srcdir="${src}/java" destdir="${build}/classes/opendaiexport" classpath="${lib}/servlet-api-2.5-20081211.jar:${lib}/log4j-1.2.16.jar:${lib}/dbman-20130613.jar:${xmlbeans-jar}:${aqd-jar}:${build}/classes/anagraphic" includeantruntime="false" debug="on">
+			<include name="it/csi/opendai/xmlexport/**" />
+		</javac>
+	</target>
+
+	<target name="dist-opendai-export" depends="compile-opendai-export" description="Generate Opendai Export servlet archive">
+		<mkdir dir="${dist}/bin" />
+		<war destfile="${dist}/bin/opendaiexport.war" webxml="${cfg}/servlet/web.xml">
+			<lib file="${lib}/log4j-1.2.16.jar" />
+			<lib file="${lib}/dbman-20130613.jar" />
+			<lib file="${xmlbeans-jar}" />
+			<lib file="${aqd-jar}" />
+			<metainf dir="${cfg}/servlet/META-INF" />
+			<classes dir="${build}/classes/anagraphic" />
+			<classes dir="${build}/classes/opendaiexport" />
+			<classes file="${cfg}/servlet/log4j.properties" />
+		</war>
+	</target>
+
+	<target name="install-opendai-export-tomcatts" depends="dist-opendai-export" description="Deploy on Tomcatts of Opendai Export">
+		<exec dir="${dist}/bin" executable="scp" os="Linux">
+			<arg line="opendaiexport.war ariatest.csi.it:/var/web/tomcatts/webapps/" />
+		</exec>
+	</target>
+
+</project>

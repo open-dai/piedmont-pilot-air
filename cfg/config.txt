@@ -1,0 +1,30 @@
+# Data base configuration
+<DBConnCfgItem>
+ descrizione = S.R.Q.A. - Banca Dati Regionale
+ nome simbolico = regprod
+## direct connection
+ indirizzo host = regprod.csi.it
+ porta host = 1528
+ data base = REGPROD
+ utente = aria_app
+ password = *******
+## data source connection
+# data source name = jdbc/srqa
+##
+ data base engine = oracle
+ tipologia tabelle = aria_reg
+</DBConnCfgItem>
+
+# Data export configuration
+<ExportCfgItem>
+ public stations = true
+ public managed private stations = false
+ private stations = false
+ chemical sensors = true
+ meteo sensors = false
+ aux sensors = false
+ only national stations = true
+ only national sensors = true
+ anagraphic schema uri = http://localhost/AirQualityStationsInfo.xsd
+ max data per request = 64000
+</ExportCfgItem>
